@@ -49,7 +49,7 @@ Meteor.methods({
     });
   },
   getGithubRepos: function() {
-    ghteam.repos((e,r) => {
+    asyncRepos((e,r) => {
       if(!e)
         r.forEach((item) => {
           DB.Repos.upsert({
@@ -66,6 +66,7 @@ Meteor.methods({
   getGithubCommits: function() {
     //get repos from db
     let repos = DB.Repos.find().fetch();
+    let query = {};
 
     repos.forEach((item)=>{
       //get latest commit from db
@@ -78,30 +79,31 @@ Meteor.methods({
       });
 
       if (commit) {
+        query.since = commit.date;
+      }
 
-        let ghrepo = client.repo(item.full_name);
+      let ghrepo = client.repo(item.full_name);
 
-        ghrepo.commits({
-          since: commit.date
-        },(e,r)=> {
-          if(!e)
-            r.forEach((item) => {
-              ghrepo.commit(item.sha, (e,r) => {
-                if(!e) {
-                  DB.Commits.upsert({
-                    sha: r.sha
-                  },{
-                    userId: r.author.id,
-                    sha: r.sha,
-                    stats: r.stats
-                  })
-                }
-              }) 
-            });
-        });
-      };
+      let asyncGhcommits = Meteor.wrapAsync(ghrepo.commits, ghrepo);
+      let asyncGhcommit = Meteor.wrapAsync(ghrepo.commit, ghrepo);
 
+      asyncGhcommits(query,(e,r)=> {
+        if(!e)
+          r.forEach((item) => {
+            asyncGhcommit(item.sha, (e,r) => {
+              if(!e) {
+                console.log(r.author)
+                DB.Commits.upsert({
+                  sha: r.sha
+                },{
+                  userId: (r.author)?r.author.id:(r.commiter)?r.commiter.id:'',
+                  sha: r.sha,
+                  stats: r.stats
+                })
+              }
+            }) 
+          });
+      });
     });
-    
   }
 });
