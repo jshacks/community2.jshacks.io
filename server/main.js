@@ -11,24 +11,22 @@ const ghteam = client.team(Meteor.settings.github.teamid);
 const asyncMembers = Meteor.wrapAsync(ghteam.members, ghteam);
 const asyncRepos = Meteor.wrapAsync(ghteam.repos, ghteam);
 
-// Meteor.startup(() => {
-//   ghteam.repos(function(e,r){
-//     if(!e) {
-//       r.forEach((item)=>{
-//         let ghrepo = client.repo(item.full_name);
+Meteor.startup(() => {
+  SyncedCron.add({
+    name: 'Run DB update',
+    schedule: function(parser) {
+      // parser is a later.parse object
+      return parser.text('every 1 minute');
+    },
+    job: function() {
+      Meteor.call('getGithubUsers');
+      Meteor.call('getGithubRepos');
+      Meteor.call('getGithubCommits');
+    }
+  });
 
-//         ghrepo.commits((er,rez) => {
-//           rez.forEach((item) => {
-//             console.log(item.sha)
-//             ghrepo.commit(item.sha, (e,ror) => {
-//               console.log(ror);
-//             });
-//           });
-//         });
-//       });
-//     }
-//   });
-// });
+  SyncedCron.start();
+});
 
 
 Meteor.methods({
@@ -47,6 +45,7 @@ Meteor.methods({
         });
 
     });
+
   },
   getGithubRepos: function() {
     asyncRepos((e,r) => {
@@ -92,7 +91,6 @@ Meteor.methods({
           r.forEach((item) => {
             asyncGhcommit(item.sha, (e,r) => {
               if(!e) {
-                console.log(r.author)
                 DB.Commits.upsert({
                   sha: r.sha
                 },{
