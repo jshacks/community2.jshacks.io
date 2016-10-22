@@ -11,6 +11,8 @@ Template.hello.onCreated(function helloOnCreated() {
   this.subscribe('allUsers');
   this.subscribe('allRepos');
   this.subscribe('allCommits');
+  this.subscribe('allIssues');
+  this.subscribe('allBranches');
 });
 
 Template.hello.helpers({
@@ -22,6 +24,12 @@ Template.hello.helpers({
   },
   commits: function() {
     return DB.Commits.find();
+  },
+  issues: function() {
+    return DB.Issues.find();
+  },
+  branches: function() {
+    return DB.Branches.find();
   },
   commitsForUser: function() {
     return DB.Commits.find({

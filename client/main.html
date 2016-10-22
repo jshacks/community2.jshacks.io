@@ -21,8 +21,18 @@
       {{/each}}
     </ul>
     <ul>
+      {{#each issues}}
+        <li>{{number}} | {{state}} | {{title}}</li>
+      {{/each}}
+    </ul>
+    <ul>
       {{#each commits}}
         <li>{{sha}} | {{data}}</li>
+      {{/each}}
+    </ul>
+    <ul>
+      {{#each branches}}
+        <li>{{branchId}}</li>
       {{/each}}
     </ul>
   {{else}}

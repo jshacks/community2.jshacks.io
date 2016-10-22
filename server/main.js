@@ -29,6 +29,8 @@ Meteor.startup(() => {
             Meteor.call('getGithubUsers');
             Meteor.call('getGithubRepos');
             Meteor.call('getGithubCommits');
+            Meteor.call('getGithubIssues');
+            Meteor.call('getGithubBranches');
           }
         }
       });
@@ -118,6 +120,81 @@ Meteor.methods({
           });
       });
     });
+  },
+  getGithubIssues: function() {
+    //get repos from db
+    let repos = DB.Repos.find().fetch();
+    let query = {};
+
+    repos.forEach((item)=>{
+      //get latest commit from db
+      let issue = DB.Issues.findOne({
+        repoId: item.repoId
+      },{
+        order: {
+          date: -1
+        }
+      });
+
+      if (issue) {
+        query.since = issue.date;
+      }
+
+      let ghrepo = client.repo(item.full_name);
+
+      let asyncGhissues = Meteor.wrapAsync(ghrepo.issues, ghrepo);
+
+      asyncGhissues(query,(e,r)=> {
+        if(!e)
+          r.forEach((i) => {
+            DB.Issues.upsert({
+              issueId: i.id
+            },{
+              repoId: item.repoId,
+              issueId: i.id,
+              number: i.number,
+              state: i.state,
+              title: i.title,
+              body: i.body,
+              userId: i.user.id,
+              labels: i.labels,
+              asigneeId: (i.asignee)?i.asignee.id:null,
+              data: i.created_at,
+              dataUpd: i.updated_at,
+              reactions: (i.reactions)?i.reactions:null
+            });
+          });
+      });
+    });
+  },
+  getGithubBranches: function() {
+    //get repos from db
+    let repos = DB.Repos.find().fetch();
+    let query = {};
+
+    repos.forEach((item)=>{
+
+      let ghrepo = client.repo(item.full_name);
+
+      let asyncGhbranches = Meteor.wrapAsync(ghrepo.branches, ghrepo);
+
+      asyncGhbranches((e,r)=> {
+        if(!e)
+          r.forEach((i) => {
+            DB.Branches.upsert({
+              branchId: i.name
+            },{
+              repoId: item.repoId,
+              branchId: i.name
+            });
+          });
+      });
+    });
+  },
+  removeAllData: function() {
+    _.each(DB, function(item) {
+      item.remove({});
+    })
   }
 });
 
@@ -129,4 +206,10 @@ Meteor.publish('allRepos',function(){
 });
 Meteor.publish('allCommits',function(){
   return DB.Commits.find();
+});
+Meteor.publish('allIssues', function(){
+  return DB.Issues.find();
+});
+Meteor.publish('allBranches', function(){
+  return DB.Branches.find();
 });
