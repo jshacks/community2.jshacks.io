@@ -1,17 +1,28 @@
 import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
 
+import DB from '../common/DB';
+
 import './main.html';
 
 Template.hello.onCreated(function helloOnCreated() {
   // counter starts at 0
   this.counter = new ReactiveVar(0);
+  this.subscribe('allUsers');
+  this.subscribe('allRepos');
+  this.subscribe('allCommits');
 });
 
 Template.hello.helpers({
-  counter() {
-    return Template.instance().counter.get();
+  users: function() {
+    return DB.GithubUsers.find();
   },
+  repos: function() {
+    return DB.Repos.find();
+  },
+  commits: function() {
+    return DB.Commits.find();
+  }
 });
 
 Template.hello.events({
