@@ -34,7 +34,6 @@ Meteor.startup(() => {
           }
         }
       });
-      
     }
   });
 
@@ -43,20 +42,40 @@ Meteor.startup(() => {
 
 
 Meteor.methods({
+
   getGithubUsers: function() {
 
-    asyncMembers((e,r) => {
-      if(!e)
-        r.forEach((item) => {
-          DB.GithubUsers.upsert({
-            userId: item.id
-          }, {
-            userId: item.id,
+    asyncMembers((e, members) => {
+      if(e) {
+        console.error(e)
+        return
+      }
 
-            login: item.login,
-            avatar_url: item.avatar_url
-          });
-        });
+      members.forEach(member => {
+        let user = client.user(member.login)
+
+        let asyncFollowers = Meteor.wrapAsync(user.followers, user);
+        let asyncFollowing = Meteor.wrapAsync(user.following, user)
+        asyncFollowers((e, followers) => {
+
+          asyncFollowing((e, following) => {
+
+            DB.GithubUsers.upsert({
+              userId: member.id
+            }, {
+              userId: member.id,
+              login: member.login,
+              avatar_url: member.avatar_url,
+              gravatar_url: member.gravatar_url,
+              followers: followers.map(x => x.login),
+              following: following.map(x => x.login)
+            });
+
+          })
+
+        })
+
+      })
 
     });
 
@@ -213,3 +232,5 @@ Meteor.publish('allIssues', function(){
 Meteor.publish('allBranches', function(){
   return DB.Branches.find();
 });
+
+Meteor.call('getGithubUsers')

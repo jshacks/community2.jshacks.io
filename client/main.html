@@ -12,7 +12,12 @@
   {{#if Template.subscriptionsReady}}
     <ul>
       {{#each users}}
-        <li>{{login}} | Commits: {{commitsForUser}}</li>
+        <li>
+          User: {{login}}
+          Commits: {{commitsForUser}}
+          Followers: {{followers.length}}
+          Following: {{following.length}}
+        </li>
       {{/each}}
     </ul>
     <ul>
