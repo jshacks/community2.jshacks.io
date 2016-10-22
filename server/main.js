@@ -40,6 +40,7 @@ Meteor.methods({
             userId: item.id
           }, {
             userId: item.id,
+
             login: item.login,
             avatar_url: item.avatar_url
           });
@@ -91,8 +92,8 @@ Meteor.methods({
       asyncGhcommits(query,(e,r)=> {
         console.log(e)
         if(!e)
-          r.forEach((item) => {
-            asyncGhcommit(item.sha, (e,r) => {
+          r.forEach((i) => {
+            asyncGhcommit(i.sha, (e,r) => {
               console.log(e)
               if(!e) {
                 DB.Commits.upsert({
@@ -101,7 +102,8 @@ Meteor.methods({
                   userId: (r.author)?r.author.id:(r.commiter)?r.commiter.id:'',
                   sha: r.sha,
                   stats: r.stats,
-                  data: r.commit.author.date
+                  data: r.commit.author.date,
+                  repoId: item.repoId
                 });
               }
             }) 
