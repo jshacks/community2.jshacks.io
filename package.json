@@ -5,6 +5,7 @@
     "start": "meteor run"
   },
   "dependencies": {
+    "fibers": "^1.0.15",
     "meteor-node-stubs": "~0.2.0",
     "octonode": "^0.7.6"
   }
