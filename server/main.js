@@ -33,7 +33,7 @@ Meteor.methods({
   getGithubUsers: function() {
 
     asyncMembers((e,r) => {
-      
+      console.log(e)
       if(!e)
         r.forEach((item) => {
           DB.GithubUsers.upsert({
@@ -50,6 +50,7 @@ Meteor.methods({
   },
   getGithubRepos: function() {
     asyncRepos((e,r) => {
+      console.log(e)
       if(!e)
         r.forEach((item) => {
           DB.Repos.upsert({
@@ -88,21 +89,34 @@ Meteor.methods({
       let asyncGhcommit = Meteor.wrapAsync(ghrepo.commit, ghrepo);
 
       asyncGhcommits(query,(e,r)=> {
+        console.log(e)
         if(!e)
           r.forEach((item) => {
             asyncGhcommit(item.sha, (e,r) => {
+              console.log(e)
               if(!e) {
                 DB.Commits.upsert({
                   sha: r.sha
                 },{
                   userId: (r.author)?r.author.id:(r.commiter)?r.commiter.id:'',
                   sha: r.sha,
-                  stats: r.stats
-                })
+                  stats: r.stats,
+                  data: r.commit.author.date
+                });
               }
             }) 
           });
       });
     });
   }
+});
+
+Meteor.publish('allUsers',function(){
+  return DB.GithubUsers.find();
+});
+Meteor.publish('allRepos',function(){
+  return DB.Repos.find();
+});
+Meteor.publish('allCommits',function(){
+  return DB.Commits.find();
 });
