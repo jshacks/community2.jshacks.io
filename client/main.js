@@ -22,6 +22,16 @@ Template.hello.helpers({
   },
   commits: function() {
     return DB.Commits.find();
+  },
+  commitsForUser: function() {
+    return DB.Commits.find({
+      userId: this.userId
+    }).count();
+  },
+  commitsForRepo: function() {
+    return DB.Commits.find({
+      repoId: this.repoId
+    }).count();
   }
 });
 

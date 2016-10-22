@@ -8,6 +8,8 @@ import github from 'octonode';
 const client = github.client(Meteor.settings.github.token);
 const ghteam = client.team(Meteor.settings.github.teamid);
 
+const asyncLimit = Meteor.wrapAsync(client.limit, client);
+
 const asyncMembers = Meteor.wrapAsync(ghteam.members, ghteam);
 const asyncRepos = Meteor.wrapAsync(ghteam.repos, ghteam);
 
@@ -19,9 +21,18 @@ Meteor.startup(() => {
       return parser.text('every 1 minute');
     },
     job: function() {
-      Meteor.call('getGithubUsers');
-      Meteor.call('getGithubRepos');
-      Meteor.call('getGithubCommits');
+      asyncLimit((e,l,m) => {
+        if(!e) {
+          if(m-l < 10) {
+            console.log('Rate limit reached');
+          } else {
+            Meteor.call('getGithubUsers');
+            Meteor.call('getGithubRepos');
+            Meteor.call('getGithubCommits');
+          }
+        }
+      });
+      
     }
   });
 
@@ -33,7 +44,6 @@ Meteor.methods({
   getGithubUsers: function() {
 
     asyncMembers((e,r) => {
-      console.log(e)
       if(!e)
         r.forEach((item) => {
           DB.GithubUsers.upsert({
@@ -51,7 +61,6 @@ Meteor.methods({
   },
   getGithubRepos: function() {
     asyncRepos((e,r) => {
-      console.log(e)
       if(!e)
         r.forEach((item) => {
           DB.Repos.upsert({
@@ -90,7 +99,6 @@ Meteor.methods({
       let asyncGhcommit = Meteor.wrapAsync(ghrepo.commit, ghrepo);
 
       asyncGhcommits(query,(e,r)=> {
-        console.log(e)
         if(!e)
           r.forEach((i) => {
             asyncGhcommit(i.sha, (e,r) => {

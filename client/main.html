@@ -12,12 +12,12 @@
   {{#if Template.subscriptionsReady}}
     <ul>
       {{#each users}}
-        <li>{{login}}</li>
+        <li>{{login}} | Commits: {{commitsForUser}}</li>
       {{/each}}
     </ul>
     <ul>
       {{#each repos}}
-        <li>{{full_name}}</li>
+        <li>{{full_name}} <br> {{description}} <br> Commits: {{commitsForRepo}}</li>
       {{/each}}
     </ul>
     <ul>
