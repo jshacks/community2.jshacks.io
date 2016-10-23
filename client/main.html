@@ -121,39 +121,48 @@
         </div>
       {{/if}}
       {{#if isSelected "event"}}
-        <div class="ui three columns stackable grid statistics">
+        <div class="ui">
           {{#with totalCloc }}
-          <div class="column ui">
-            <div class="statistic">
-              <div class="value">
-                {{ sum.nFiles }}
+          <div class="ui three columns grid statistics stackable">
+            <div class="column ui">
+              <div class="statistic">
+                <div class="value">
+                  {{ sum.nFiles }}
+                </div>
+                <div class="label">
+                  Files Created
+                </div>
               </div>
-              <div class="label">
-                Files Created
+            </div>
+
+            <div class="column ui">
+              <div class="statistic">
+                <div class="value">
+                  {{ sum.code }}
+                </div>
+                <div class="label">
+                  Lines of Code written
+                </div>
+              </div>
+            </div>
+
+            <div class="column ui">
+              <div class="statistic">
+                <div class="value">
+                  {{ sum.comment }}
+                </div>
+                <div class="label">
+                  Lines of Code Comments Written
+                </div>
               </div>
             </div>
           </div>
-
-          <div class="column ui">
-            <div class="statistic">
-              <div class="value">
-                {{ sum.code }}
+          <div class="ui small images columns grid four">
+            {{#each types}}
+              <div>
+                <img src="{{logo}}" />
               </div>
-              <div class="label">
-                Lines of Code written
-              </div>
-            </div>
-          </div>
-
-          <div class="column ui">
-            <div class="statistic">
-              <div class="value">
-                {{ sum.comment }}
-              </div>
-              <div class="label">
-                Lines of Code Comments Written
-              </div>
-            </div>
+            {{/each}}
           </div>
           {{/with}}
         </div>
