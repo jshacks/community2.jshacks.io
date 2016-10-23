@@ -142,8 +142,10 @@ Template.hello.helpers({
    
     let keys = _.keys(stats);
 
-    console.log(keys);
+    
     _.each(keys,i=>{
+
+      if(i=== "SUM") return;
       toReturn.push({
         lang: i,
         loc: stats[i].code
