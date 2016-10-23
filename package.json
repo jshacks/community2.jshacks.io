@@ -5,8 +5,14 @@
     "start": "meteor run"
   },
   "dependencies": {
+    "exec": "^0.2.1",
     "fibers": "^1.0.15",
+    "kefir": "^3.6.0",
     "meteor-node-stubs": "~0.2.0",
-    "octonode": "^0.7.6"
+    "octonode": "^0.7.6",
+    "ramda": "^0.22.1"
+  },
+  "devDependencies": {
+    "cloc": "^2.1.0"
   }
 }
