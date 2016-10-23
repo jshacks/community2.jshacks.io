@@ -14,8 +14,9 @@
     <a data-who="projects" class={{isActive "projects"}}>Projects</a>
   </div>
   {{#if Template.subscriptionsReady}}
-    <div class="ui three columns stackable grid">
+    
       {{#if isSelected "people"}}
+      <div class="ui three columns stackable grid">
         {{#each users}}
           <div class="column">
             <div class="ui card">
@@ -56,11 +57,60 @@
             </div>
           </div>
         {{/each}}
+        </div>  
       {{/if}}
       {{#if isSelected "projects"}}
-        <div class="column">
-          <ul>
-          {{#each repos}}
+
+      <div class="ui two columns stackable grid">
+
+        {{#each repos}}
+          <div class="column">
+              <div class="ui segment">
+                <div class="ui header">{{name}}</div>
+                <div class="content">{{description}}</div>
+                <div class="ui tiny images">
+                  {{#each repoUsers}}
+                    <img src={{avatar_url}} />
+                  {{/each}}
+                </div>
+                <div class="extra content">
+                  <div class="ui statistics">
+                    <div class="statistic">
+                      <div class="value">
+                        {{issuesForProject}}
+                      </div>
+                      <div class="label">
+                        Issues
+                      </div>
+                    </div>
+                    <div class="statistic">
+                      <div class="value">
+                        {{commitsForProject}}
+                      </div>
+                      <div class="label">
+                        Commits
+                      </div>
+                    </div>
+                    <div class="statistic">
+                      <div class="value">
+                        {{locForProject}}
+                      </div>
+                      <div class="label">
+                        Lines of code
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="ui divider"></div>
+                {{#each statistics}}
+                  <div class="ui label">
+                    {{lang}} {{loc}}
+                  </div>
+                {{/each}}
+              </div>
+          </div>
+        {{/each}}
+          <!--<ul>
             <li>{{full_name}} <br> {{description}} <br> Commits: {{commitsForRepo}}</li>
           {{/each}}
           </ul>
@@ -68,10 +118,9 @@
             {{#each issues}}
               <li>{{number}} | {{state}} | {{title}}</li>
             {{/each}}
-          </ul>
+          </ul>-->
         </div>
       {{/if}}
-    </div>
     
 <!--    
     
