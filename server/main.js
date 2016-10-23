@@ -138,13 +138,16 @@ Meteor.methods({
   },
   getClocRepos: function () {
     asyncFoo(r => {
-      DB.Repos.update({
-        'name': r[0]
-      },{
-        $set: {
-          cloc: r[1]
-        }
+      _.each(r, i => {
+        DB.Repos.update({
+          'name': i[0]
+        },{
+          $set: {
+            cloc: i[1]
+          }
+        });
       });
+      
     })
   },
   getGithubCommits: function() {
