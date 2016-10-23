@@ -71,9 +71,14 @@ Template.hello.helpers({
       types: R.keys(R.omit('SUM', cloc))
     }
 
-
     console.log(totalCloc)
     return totalCloc
+  },
+  totalCommits: function () {
+    let commits = DB.Commits.find().fetch()
+    console.log(commits)
+
+    return commits.length
   },
   logo: function () {
     return logos[this]

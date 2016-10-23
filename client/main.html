@@ -16,7 +16,7 @@
   </div>
   {{#if Template.subscriptionsReady}}
       {{#if isSelected "people"}}
-      <div class="ui three columns stackable grid">
+      <div class="ui five columns stackable grid">
         {{#each users}}
           <div class="column">
             <div class="ui card">
@@ -123,7 +123,26 @@
       {{#if isSelected "event"}}
         <div class="ui">
           {{#with totalCloc }}
-          <div class="ui three columns grid statistics stackable">
+
+            <h2 class="ui center aligned icon header">
+              <i class="circular code icon"></i>
+              Code
+            </h2>
+            <div class="ui divider"></div>
+
+
+          <div class="ui four columns grid statistics stackable">
+            <div class="column ui">
+              <div class="statistic">
+                <div class="value">
+                  {{ totalCommits }}
+                </div>
+                <div class="label">
+                  Total Commits
+                </div>
+              </div>
+            </div>
+
             <div class="column ui">
               <div class="statistic">
                 <div class="value">
@@ -141,7 +160,7 @@
                   {{ sum.code }}
                 </div>
                 <div class="label">
-                  Lines of Code written
+                  Lines of Code
                 </div>
               </div>
             </div>
@@ -152,11 +171,22 @@
                   {{ sum.comment }}
                 </div>
                 <div class="label">
-                  Lines of Code Comments Written
+                  Lines of Code Comments
                 </div>
               </div>
             </div>
+
           </div>
+
+          <h2 class="ui center aligned icon header">
+            <i class="circular users icon"></i>
+            Languages
+          </h2>
+
+          <div class="ui divider"></div>
+          <br />
+          <br />
+
           <div class="ui small images columns grid four">
             {{#each types}}
               <div>
