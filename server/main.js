@@ -1,5 +1,30 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
+import execOrig from 'exec'
+import * as Kefir from 'kefir'
+import R from 'ramda'
+
+const root = process.cwd().split('.meteor')[0]
+
+const exec = (cmds) => Kefir.fromCallback(cb => {
+  execOrig(cmds, (err, out, code) => {
+    if (err instanceof Error)
+      throw err;
+    cb(out)
+  })
+})
+
+const getRepo = repo =>
+  exec(`cd ${root}/public && git clone git@github.com:jshacks/${repo}`)
+    .map(x => repo)
+
+const getCloc = repo =>
+  exec([`${root}/node_modules/.bin/cloc`, '--exclude-dir=node_modules', '--json', `${root}/public/${repo}`])
+    .map(x => JSON.parse(x))
+    .map(R.omit('header'))
+    .map(x => R.assoc(repo, x, {}))
+
+
 import DB from '../common/DB';
 
 import github from 'octonode';
@@ -12,6 +37,22 @@ const asyncLimit = Meteor.wrapAsync(client.limit, client);
 
 const asyncMembers = Meteor.wrapAsync(ghteam.members, ghteam);
 const asyncRepos = Meteor.wrapAsync(ghteam.repos, ghteam);
+
+function foo(cb) {
+  let repos = R.map(R.prop('name'), DB.Repos.find().fetch())
+
+  Kefir
+    .constant(repos)
+    .flatten()
+    .flatMap(getRepo)
+    .flatMap(getCloc)
+    .bufferWhile(R.T)
+    .map(R.mergeAll)
+    .onValue(cb)
+    .onError(cb)
+}
+
+const asyncFoo = Meteor.wrapAsync(foo)
 
 Meteor.startup(() => {
   SyncedCron.add({
@@ -94,6 +135,11 @@ Meteor.methods({
           });
         });
     });
+  },
+  getClocRepos: function () {
+    asyncFoo(r => {
+      console.log(r)
+    })
   },
   getGithubCommits: function() {
     //get repos from db
@@ -233,4 +279,4 @@ Meteor.publish('allBranches', function(){
   return DB.Branches.find();
 });
 
-Meteor.call('getGithubUsers')
+Meteor.call('getClocRepos')
