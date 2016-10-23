@@ -15,8 +15,8 @@
     <a data-who="projects" class={{isActive "projects"}}>Projects</a>
   </div>
   {{#if Template.subscriptionsReady}}
-    <div class="ui three columns stackable grid statistics">
       {{#if isSelected "people"}}
+      <div class="ui three columns stackable grid">
         {{#each users}}
           <div class="column">
             <div class="ui card">
@@ -57,9 +57,9 @@
             </div>
           </div>
         {{/each}}
+      </div>
       {{/if}}
       {{#if isSelected "projects"}}
-
       <div class="ui two columns stackable grid">
 
         {{#each repos}}
@@ -121,43 +121,43 @@
         </div>
       {{/if}}
       {{#if isSelected "event"}}
-        {{#with totalCloc }}
-        <div class="column ui">
-          <div class="statistic">
-            <div class="value">
-              {{ sum.nFiles }}
-            </div>
-            <div class="label">
-              Files Created
-            </div>
-          </div>
-        </div>
-
-        <div class="column ui">
-          <div class="statistic">
-            <div class="value">
-              {{ sum.code }}
-            </div>
-            <div class="label">
-              Lines of Code written
+        <div class="ui three columns stackable grid statistics">
+          {{#with totalCloc }}
+          <div class="column ui">
+            <div class="statistic">
+              <div class="value">
+                {{ sum.nFiles }}
+              </div>
+              <div class="label">
+                Files Created
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="column ui">
-          <div class="statistic">
-            <div class="value">
-              {{ sum.comment }}
-            </div>
-            <div class="label">
-              Code Comments Written
+          <div class="column ui">
+            <div class="statistic">
+              <div class="value">
+                {{ sum.code }}
+              </div>
+              <div class="label">
+                Lines of Code written
+              </div>
             </div>
           </div>
-        </div>
 
-        {{/with}}
+          <div class="column ui">
+            <div class="statistic">
+              <div class="value">
+                {{ sum.comment }}
+              </div>
+              <div class="label">
+                Lines of Code Comments Written
+              </div>
+            </div>
+          </div>
+          {{/with}}
+        </div>
       {{/if}}
-    </div>
     
 <!--    
     

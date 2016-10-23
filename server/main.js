@@ -19,7 +19,7 @@ const getRepo = repo =>
     .map(x => repo)
 
 const getCloc = repo =>
-  exec([`${root}/node_modules/.bin/cloc`, '--exclude-dir=node_modules', '--json', `${root}/public/${repo}`])
+  exec([`${root}/node_modules/.bin/cloc`, '--exclude-dir=node_modules', '--exclude-dir=bower_modules', '--json', `${root}/public/${repo}`])
     .map(x => JSON.parse(x))
     .map(R.omit('header'))
     .map(x => ([repo, x]))
