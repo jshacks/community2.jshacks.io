@@ -85,8 +85,9 @@ Meteor.startup(() => {
 Meteor.methods({
 
   getGithubUsers: function() {
-
-    asyncMembers((e, members) => {
+    asyncMembers({
+      per_page: 500
+    },(e, members) => {
       if(e) {
         console.error(e)
         return
@@ -122,7 +123,9 @@ Meteor.methods({
 
   },
   getGithubRepos: function() {
-    asyncRepos((e,r) => {
+    asyncRepos({
+      per_page: 500
+    },(e,r) => {
       if(!e)
         r.forEach((item) => {
           DB.Repos.upsert({
@@ -153,7 +156,9 @@ Meteor.methods({
   getGithubCommits: function() {
     //get repos from db
     let repos = DB.Repos.find().fetch();
-    let query = {};
+    let query = {
+      per_page: 2000
+    };
 
     repos.forEach((item)=>{
       //get latest commit from db
@@ -187,7 +192,8 @@ Meteor.methods({
                   sha: r.sha,
                   stats: r.stats,
                   data: r.commit.author.date,
-                  repoId: item.repoId
+                  repoId: item.repoId,
+                  body: r
                 });
               }
             }) 
@@ -198,7 +204,9 @@ Meteor.methods({
   getGithubIssues: function() {
     //get repos from db
     let repos = DB.Repos.find().fetch();
-    let query = {};
+    let query = {
+      per_page: 1000
+    };
 
     repos.forEach((item)=>{
       //get latest commit from db
@@ -244,7 +252,9 @@ Meteor.methods({
   getGithubBranches: function() {
     //get repos from db
     let repos = DB.Repos.find().fetch();
-    let query = {};
+    let query = {
+      per_page: 1000
+    };
 
     repos.forEach((item)=>{
 
@@ -279,7 +289,11 @@ Meteor.publish('allRepos',function(){
   return DB.Repos.find();
 });
 Meteor.publish('allCommits',function(){
-  return DB.Commits.find();
+  return DB.Commits.find({},{
+    fields: {
+      body: 0
+    }
+  });
 });
 Meteor.publish('allIssues', function(){
   return DB.Issues.find();

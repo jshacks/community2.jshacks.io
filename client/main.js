@@ -1,6 +1,5 @@
 import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
-import R from 'ramda'
 
 import DB from '../common/DB';
 
@@ -79,6 +78,31 @@ Template.hello.helpers({
       userId: this.userId
     }).count();
   },
+  commitsForProject: function() {
+    return DB.Commits.find({
+      repoId: this.repoId
+    }).count();
+  },
+  issuesForProject: function() {
+    return DB.Issues.find({
+          repoId: this.repoId
+        }).count();
+  },
+  locForProject: function() {
+    let project = DB.Repos.findOne({
+      repoId: this.repoId
+    });
+
+    let stats = project.cloc;
+    let total = 0;
+
+    delete stats.SUM;
+    _.each(stats, (i) => {
+      total += i.code
+    });
+
+    return total;
+  },
   socialStats: function() {
     let users = R.map(R.prop('login'), DB.GithubUsers.find().fetch())
     let socialUsers = R.concat(this.following, this.followers)
@@ -90,11 +114,43 @@ Template.hello.helpers({
       repoId: this.repoId
     }).count();
   },
-  isActive(who) {
+  isActive: function(who) {
     return Template.instance().isActive.get() === who ? 'active item select': 'item select';
   },
-  isSelected(who) {
+  isSelected: function(who) {
     return Template.instance().isActive.get() === who;
+  },
+  repoUsers: function() {
+    let usersForIssues = _.pluck(DB.Issues.find({repoId:this.repoId}).fetch(), "userId");
+    let usersForCommits = _.pluck(DB.Commits.find({repoId:this.repoId}).fetch(), "userId");
+
+    return DB.GithubUsers.find({
+      userId: {
+        $in: _.union(usersForIssues,usersForCommits)
+      }
+    });
+  },
+  statistics: function() {
+    let repo = DB.Repos.findOne({
+      repoId: this.repoId
+    });
+
+    let stats = repo.cloc;
+    delete stats.SUM;
+    let toReturn = [];
+   
+    let keys = _.keys(stats);
+
+    console.log(keys);
+    _.each(keys,i=>{
+      toReturn.push({
+        lang: i,
+        loc: stats[i].code
+      });
+    });
+
+    return toReturn;
+
   }
 });
 
