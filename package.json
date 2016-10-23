@@ -4,9 +4,17 @@
   "scripts": {
     "start": "meteor run"
   },
+  "devDependencies": {
+    "autoprefixer": "^6.3.1"
+  },
   "dependencies": {
     "fibers": "^1.0.15",
     "meteor-node-stubs": "~0.2.0",
     "octonode": "^0.7.6"
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {"browsers": ["last 2 versions"]}
+    }
   }
 }

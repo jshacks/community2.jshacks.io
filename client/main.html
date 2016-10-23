@@ -3,33 +3,78 @@
 </head>
 
 <body>
-  <h1>Welcome to Meteor!</h1>
-
-  {{> hello}}
+  <div class="ui container">
+    {{> hello}}
+  </div>
 </body>
 
 <template name="hello">
+  <div class="ui red two item inverted menu">
+    <a data-who="people" class={{isActive "people"}}>People</a>
+    <a data-who="projects" class={{isActive "projects"}}>Projects</a>
+  </div>
   {{#if Template.subscriptionsReady}}
-    <ul>
-      {{#each users}}
-        <li>
-          User: {{login}}
-          Commits: {{commitsForUser}}
-          Followers: {{followers.length}}
-          Following: {{following.length}}
-        </li>
-      {{/each}}
-    </ul>
-    <ul>
-      {{#each repos}}
-        <li>{{full_name}} <br> {{description}} <br> Commits: {{commitsForRepo}}</li>
-      {{/each}}
-    </ul>
-    <ul>
-      {{#each issues}}
-        <li>{{number}} | {{state}} | {{title}}</li>
-      {{/each}}
-    </ul>
+    <div class="ui three columns stackable grid">
+      {{#if isSelected "people"}}
+        {{#each users}}
+          <div class="column">
+            <div class="ui card">
+              <div class="image">
+                <img src={{avatar_url}} />
+                <div class="content">
+                  <div class="ui segment large header">{{login}}</div>
+                  <div class="extra content">
+                    <div class="ui three mini statistics">
+                      <div class="ui statistic">
+                        <div class="value">
+                          <i class="cloud upload icon"></i> {{commitsForUser}}
+                        </div>
+                        <div class="label">
+                          Commits
+                        </div>
+                      </div>
+                      <div class="statistic">
+                        <div class="value">
+                          <i class="users icon"></i> {{issuesForUser}}
+                        </div>
+                        <div class="label">
+                          Issues
+                        </div>
+                      </div>
+                      <div class="statistic">
+                        <div class="value">
+                          <i class="spy icon"></i> {{totalFollowers}}
+                        </div>
+                        <div class="label">
+                          Social
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        {{/each}}
+      {{/if}}
+      {{#if isSelected "projects"}}
+        <div class="column">
+          <ul>
+          {{#each repos}}
+            <li>{{full_name}} <br> {{description}} <br> Commits: {{commitsForRepo}}</li>
+          {{/each}}
+          </ul>
+          <ul>
+            {{#each issues}}
+              <li>{{number}} | {{state}} | {{title}}</li>
+            {{/each}}
+          </ul>
+        </div>
+      {{/if}}
+    </div>
+    
+<!--    
+    
     <ul>
       {{#each commits}}
         <li>{{sha}} | {{data}}</li>
@@ -39,7 +84,7 @@
       {{#each branches}}
         <li>{{branchId}}</li>
       {{/each}}
-    </ul>
+    </ul>-->
   {{else}}
     Loading data
   {{/if}}

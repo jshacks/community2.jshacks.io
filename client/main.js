@@ -7,7 +7,7 @@ import './main.html';
 
 Template.hello.onCreated(function helloOnCreated() {
   // counter starts at 0
-  this.counter = new ReactiveVar(0);
+  this.isActive = new ReactiveVar("people");
   this.subscribe('allUsers');
   this.subscribe('allRepos');
   this.subscribe('allCommits');
@@ -36,16 +36,33 @@ Template.hello.helpers({
       userId: this.userId
     }).count();
   },
+  issuesForUser: function() {
+    return DB.Issues.find({
+      userId: this.userId
+    }).count();
+  },
+  totalFollowers: function() {
+    console.log(this.following, this.followers)
+    let users = _.pluck(DB.GithubUsers.find().fetch(),"login");
+    return _.intersection(this.following,users).length + _.intersection(this.followers,users).length;
+  },
   commitsForRepo: function() {
     return DB.Commits.find({
       repoId: this.repoId
     }).count();
+  },
+  isActive(who) {
+    return Template.instance().isActive.get() === who ? 'active item select': 'item select';
+  },
+  isSelected(who) {
+    return Template.instance().isActive.get() === who;
   }
 });
 
 Template.hello.events({
-  'click button'(event, instance) {
-    // increment the counter when button is clicked
-    instance.counter.set(instance.counter.get() + 1);
+  'click a.select'(event, instance) {
+    $(event.preventDefault());
+
+    instance.isActive.set($(event.currentTarget).data('who'));
   },
 });

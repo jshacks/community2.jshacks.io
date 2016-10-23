@@ -232,5 +232,3 @@ Meteor.publish('allIssues', function(){
 Meteor.publish('allBranches', function(){
   return DB.Branches.find();
 });
-
-Meteor.call('getGithubUsers')
