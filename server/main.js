@@ -22,7 +22,7 @@ const getCloc = repo =>
   exec([`${root}/node_modules/.bin/cloc`, '--exclude-dir=node_modules', '--json', `${root}/public/${repo}`])
     .map(x => JSON.parse(x))
     .map(R.omit('header'))
-    .map(x => R.assoc(repo, x, {}))
+    .map(x => ([repo, x]))
 
 
 import DB from '../common/DB';
@@ -47,7 +47,6 @@ function foo(cb) {
     .flatMap(getRepo)
     .flatMap(getCloc)
     .bufferWhile(R.T)
-    .map(R.mergeAll)
     .onValue(cb)
     .onError(cb)
 }
@@ -72,6 +71,7 @@ Meteor.startup(() => {
             Meteor.call('getGithubCommits');
             Meteor.call('getGithubIssues');
             Meteor.call('getGithubBranches');
+            Meteor.call('getClocRepos');
           }
         }
       });
@@ -138,7 +138,13 @@ Meteor.methods({
   },
   getClocRepos: function () {
     asyncFoo(r => {
-      console.log(r)
+      DB.Repos.update({
+        'name': r[0]
+      },{
+        $set: {
+          cloc: r[1]
+        }
+      });
     })
   },
   getGithubCommits: function() {
@@ -278,5 +284,3 @@ Meteor.publish('allIssues', function(){
 Meteor.publish('allBranches', function(){
   return DB.Branches.find();
 });
-
-Meteor.call('getClocRepos');
