@@ -9,12 +9,13 @@
 </body>
 
 <template name="hello">
-  <div class="ui red two item inverted menu">
+  <div class="ui red three item inverted menu">
+    <a data-who="event" class={{isActive "event"}}>Event</a>
     <a data-who="people" class={{isActive "people"}}>People</a>
     <a data-who="projects" class={{isActive "projects"}}>Projects</a>
   </div>
   {{#if Template.subscriptionsReady}}
-    <div class="ui three columns stackable grid">
+    <div class="ui three columns stackable grid statistics">
       {{#if isSelected "people"}}
         {{#each users}}
           <div class="column">
@@ -43,7 +44,7 @@
                       </div>
                       <div class="statistic">
                         <div class="value">
-                          <i class="spy icon"></i> {{totalFollowers}}
+                          <i class="spy icon"></i> {{socialStats}}
                         </div>
                         <div class="label">
                           Social
@@ -71,10 +72,45 @@
           </ul>
         </div>
       {{/if}}
+      {{#if isSelected "event"}}
+        {{#with totalCloc }}
+        <div class="column ui">
+          <div class="statistic">
+            <div class="value">
+              {{ sum.nFiles }}
+            </div>
+            <div class="label">
+              Files Created
+            </div>
+          </div>
+        </div>
+
+        <div class="column ui">
+          <div class="statistic">
+            <div class="value">
+              {{ sum.code }}
+            </div>
+            <div class="label">
+              Lines of Code written
+            </div>
+          </div>
+        </div>
+
+        <div class="column ui">
+          <div class="statistic">
+            <div class="value">
+              {{ sum.comment }}
+            </div>
+            <div class="label">
+              Code Comments Written
+            </div>
+          </div>
+        </div>
+
+        {{/with}}
+      {{/if}}
     </div>
-    
 <!--    
-    
     <ul>
       {{#each commits}}
         <li>{{sha}} | {{data}}</li>
