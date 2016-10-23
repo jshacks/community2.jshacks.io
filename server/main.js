@@ -279,4 +279,4 @@ Meteor.publish('allBranches', function(){
   return DB.Branches.find();
 });
 
-Meteor.call('getClocRepos')
+Meteor.call('getClocRepos');
