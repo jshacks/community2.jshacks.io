@@ -58,7 +58,7 @@ Meteor.startup(() => {
     name: 'Run DB update',
     schedule: function(parser) {
       // parser is a later.parse object
-      return parser.text('every 1 minute');
+      return parser.text('every 2 minutes');
     },
     job: function() {
       asyncLimit((e,l,m) => {
