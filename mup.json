@@ -2,7 +2,7 @@
   // Server authentication info
   "servers": [
     {
-      "host": "138.68.138.121",
+      "host": "188.166.174.166",
       "username": "root",
       "password": "njU5fG5eEEhPYcrD",
       // or pem file (ssh based authentication)
@@ -37,7 +37,7 @@
   // Before mup checks that, it will wait for the number of seconds configured below.
   "deployCheckWaitTime": 60,
 
-  // show a progress bar while uploading. 
+  // show a progress bar while uploading.
   // Make it false when you deploy using a CI box.
   "enableUploadProgressBar": true
 }
