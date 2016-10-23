@@ -125,6 +125,40 @@
           {{#with totalCloc }}
 
             <h2 class="ui center aligned icon header">
+              <img style="width:200px" src="/logo.png" />
+            </h2>
+            <div class="ui divider"></div>
+
+          <div class="ui two columns grid statistics stackable">
+
+            <div class="column ui">
+
+              <div class="statistic">
+                <div class="value">
+                  {{ totalRepos }}
+                </div>
+                <div class="label">
+                  Teams
+                </div>
+              </div>
+
+            </div>
+
+            <div class="column ui">
+
+                <div class="statistic">
+                  <div class="value">
+                    {{ totalUsers }}
+                  </div>
+                  <div class="label">
+                    JSHackers
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <h2 class="ui center aligned icon header">
               <i class="circular code icon"></i>
               Code
             </h2>

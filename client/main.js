@@ -86,6 +86,12 @@ Template.hello.helpers({
   users: function() {
     return DB.GithubUsers.find();
   },
+  totalUsers: function () {
+    return DB.GithubUsers.find().fetch().length
+  },
+  totalRepos: function () {
+    return DB.Repos.find().fetch().length
+  },
   repos: function() {
     return DB.Repos.find();
   },
