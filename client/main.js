@@ -33,7 +33,9 @@ let logos = {
   Elm: 'http://seeklogo.com/images/E/elm-logo-9DEF2A830B-seeklogo.com.png',
   XML: 'http://www.bunniktours.com.au/var/plain_site/storage/images/media/images/xml-logo/113656-1-eng-AU/xml-logo.png',
   Python: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/1024px-Python-logo-notext.svg.png',
-  Blade: 'http://kodeinfo.com/img/laravel_logo.png'
+  Blade: 'http://kodeinfo.com/img/laravel_logo.png',
+  Java: 'http://logodatabases.com/wp-content/uploads/2012/03/java-logo-large.png',
+  'Qt Linguist': 'https://lh4.googleusercontent.com/-FkJ4eHM2FSA/UYkyzdIFj0I/AAAAAAAABEY/c9DyzVo9WuY/s256/qt-linguist.png'
 }
 
 Template.hello.helpers({
@@ -71,17 +73,15 @@ Template.hello.helpers({
       types: R.keys(R.omit('SUM', cloc))
     }
 
-    console.log(totalCloc)
     return totalCloc
   },
   totalCommits: function () {
     let commits = DB.Commits.find().fetch()
-    console.log(commits)
 
     return commits.length
   },
   logo: function () {
-    return logos[this]
+    return logos[this];
   },
   users: function() {
     return DB.GithubUsers.find();

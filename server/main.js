@@ -53,29 +53,31 @@ function foo(cb) {
 
 const asyncFoo = Meteor.wrapAsync(foo)
 
+const getData = function() {
+  asyncLimit((e,l,m) => {
+    if(!e) {
+      if(m-l < 10) {
+        console.log('Rate limit reached');
+      } else {
+        Meteor.call('getGithubUsers');
+        Meteor.call('getGithubRepos');
+        Meteor.call('getGithubCommits');
+        Meteor.call('getGithubIssues');
+        Meteor.call('getGithubBranches');
+        Meteor.call('getClocRepos');
+      }
+    }
+  });
+}
+
 Meteor.startup(() => {
   SyncedCron.add({
     name: 'Run DB update',
     schedule: function(parser) {
       // parser is a later.parse object
-      return parser.text('every 2 minutes');
+      return parser.text('every 20 minutes');
     },
-    job: function() {
-      asyncLimit((e,l,m) => {
-        if(!e) {
-          if(m-l < 10) {
-            console.log('Rate limit reached');
-          } else {
-            Meteor.call('getGithubUsers');
-            Meteor.call('getGithubRepos');
-            Meteor.call('getGithubCommits');
-            Meteor.call('getGithubIssues');
-            Meteor.call('getGithubBranches');
-            Meteor.call('getClocRepos');
-          }
-        }
-      });
-    }
+    job: getData
   });
 
   SyncedCron.start();
@@ -310,4 +312,10 @@ Meteor.publish('allBranches', function(){
   return DB.Branches.find();
 });
 
-Meteor.call('getClocRepos')
+//checking if server has been initialised
+
+let hasData = DB.GithubUsers.findOne();
+
+if(!hasData) {
+  getData();
+}
