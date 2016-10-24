@@ -108,13 +108,15 @@ Meteor.methods({
             DB.GithubUsers.upsert({
               userId: member.id
             }, {
-              userId: member.id,
-              login: member.login,
-              avatar_url: member.avatar_url,
-              gravatar_url: member.gravatar_url,
-              html_url: member.html_url,
-              followers: followers.map(x => x.login),
-              following: following.map(x => x.login)
+              $set: {
+                userId: member.id,
+                login: member.login,
+                avatar_url: member.avatar_url,
+                gravatar_url: member.gravatar_url,
+                html_url: member.html_url,
+                followers: followers.map(x => x.login),
+                following: following.map(x => x.login)
+              }
             });
 
           })
@@ -137,11 +139,13 @@ Meteor.methods({
           DB.Repos.upsert({
             repoId: item.id
           },{
-            name: item.name,
-            full_name: item.full_name,
-            description: item.description,
-            html_url: item.html_url,
-            repoId: item.id
+            $set: {
+              name: item.name,
+              full_name: item.full_name,
+              description: item.description,
+              html_url: item.html_url,
+              repoId: item.id
+            }
           });
         });
     });
@@ -213,12 +217,14 @@ Meteor.methods({
                 DB.Commits.upsert({
                   sha: r.sha
                 },{
-                  userId: (r.author)?r.author.id:(r.commiter)?r.commiter.id:'',
-                  sha: r.sha,
-                  stats: r.stats,
-                  data: r.commit.author.date,
-                  repoId: item.repoId,
-                  body: r
+                  $set: {
+                    userId: (r.author)?r.author.id:(r.commiter)?r.commiter.id:'',
+                    sha: r.sha,
+                    stats: r.stats,
+                    data: r.commit.author.date,
+                    repoId: item.repoId,
+                    body: r
+                  }
                 });
               }
             }) 
@@ -262,18 +268,20 @@ Meteor.methods({
             DB.Issues.upsert({
               issueId: i.id
             },{
-              repoId: item.repoId,
-              issueId: i.id,
-              number: i.number,
-              state: i.state,
-              title: i.title,
-              body: i.body,
-              userId: i.user.id,
-              labels: i.labels,
-              asigneeId: (i.asignee)?i.asignee.id:null,
-              data: i.created_at,
-              dataUpd: i.updated_at,
-              reactions: (i.reactions)?i.reactions:null
+              $set: {
+                repoId: item.repoId,
+                issueId: i.id,
+                number: i.number,
+                state: i.state,
+                title: i.title,
+                body: i.body,
+                userId: i.user.id,
+                labels: i.labels,
+                asigneeId: (i.asignee)?i.asignee.id:null,
+                data: i.created_at,
+                dataUpd: i.updated_at,
+                reactions: (i.reactions)?i.reactions:null
+              }
             });
           });
       });
@@ -299,8 +307,10 @@ Meteor.methods({
             DB.Branches.upsert({
               branchId: i.name
             },{
-              repoId: item.repoId,
-              branchId: i.name
+              $set: {
+                repoId: item.repoId,
+                branchId: i.name
+              }
             });
           });
       });
