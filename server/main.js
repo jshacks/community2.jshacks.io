@@ -20,7 +20,7 @@ const getRepo = repo =>
     .map(x => repo)
 
 const getCloc = repo =>
-  exec([`${clocLocation}`, '--exclude-dir=node_modules,bower_modules', '--json', `${root}/.repos/${repo}`])
+  exec([`${clocLocation}`, '--exclude-dir=node_modules,bower_modules,semantic-ui,libs,lib,library', '--json', `${root}/.repos/${repo}`])
     .map(x => JSON.parse(x))
     .map(R.omit('header'))
     .map(x => ([repo, x]))
@@ -88,7 +88,7 @@ Meteor.startup(() => {
 Meteor.methods({
 
   getGithubUsers: function() {
-    //if(this.connection) throw new Meteor.Error("You cannot call this from the client");
+    if(this.connection) throw new Meteor.Error("You cannot call this from the client");
     asyncMembers({
       per_page: 500
     },(e, members) => {
@@ -128,7 +128,7 @@ Meteor.methods({
 
   },
   getGithubRepos: function() {
-    //if(this.connection) throw new Meteor.Error("You cannot call this from the client");
+    if(this.connection) throw new Meteor.Error("You cannot call this from the client");
     
     asyncRepos({
       per_page: 500
@@ -163,7 +163,7 @@ Meteor.methods({
     })
   },
   getGithubCommits: function() {
-    //if(this.connection) throw new Meteor.Error("You cannot call this from the client");    
+    if(this.connection) throw new Meteor.Error("You cannot call this from the client");    
     //get repos from db
     let repos = DB.Repos.find().fetch();
     let query = {
@@ -212,7 +212,7 @@ Meteor.methods({
     });
   },
   getGithubIssues: function() {
-    //if(this.connection) throw new Meteor.Error("You cannot call this from the client");    
+    if(this.connection) throw new Meteor.Error("You cannot call this from the client");    
     //get repos from db
     let repos = DB.Repos.find().fetch();
     let query = {
@@ -261,7 +261,7 @@ Meteor.methods({
     });
   },
   getGithubBranches: function() {
-    //if(this.connection) throw new Meteor.Error("You cannot call this from the client");    
+    if(this.connection) throw new Meteor.Error("You cannot call this from the client");    
     //get repos from db
     let repos = DB.Repos.find().fetch();
     let query = {
@@ -288,7 +288,7 @@ Meteor.methods({
     });
   },
   removeAllData: function() {
-    //if(this.connection) throw new Meteor.Error("You cannot call this from the client");    
+    if(this.connection) throw new Meteor.Error("You cannot call this from the client");    
     _.each(DB, function(item) {
       item.remove({});
     })
