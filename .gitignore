@@ -1,4 +1,5 @@
 node_modules/
 .repos/*
 .vscode
+mup.json
 settings.json
