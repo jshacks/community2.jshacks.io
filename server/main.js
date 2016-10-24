@@ -39,8 +39,8 @@ const asyncLimit = Meteor.wrapAsync(client.limit, client);
 const asyncMembers = Meteor.wrapAsync(ghteam.members, ghteam);
 const asyncRepos = Meteor.wrapAsync(ghteam.repos, ghteam);
 
-function foo(cb) {
-  let repos = R.map(R.prop('name'), DB.Repos.find().fetch())
+function foo(repo,cb) {
+  let repos = (repo)?[repo]:R.map(R.prop('name'), DB.Repos.find().fetch())
 
   Kefir
     .constant(repos)
@@ -65,7 +65,6 @@ const getData = function() {
         Meteor.call('getGithubCommits');
         Meteor.call('getGithubIssues');
         Meteor.call('getGithubBranches');
-        Meteor.call('getClocRepos');
       }
     }
   });
@@ -149,7 +148,22 @@ Meteor.methods({
   },
   getClocRepos: function () {
     if(this.connection) throw new Meteor.Error("You cannot call this from the client");    
-    asyncFoo(r => {
+    asyncFoo(null,r => {
+      _.each(r, i => {
+        DB.Repos.update({
+          'name': i[0]
+        },{
+          $set: {
+            cloc: i[1]
+          }
+        });
+      });
+      
+    })
+  },
+  getClocRepo: function (repo) {
+    if(this.connection) throw new Meteor.Error("You cannot call this from the client");    
+    asyncFoo(repo,r => {
       _.each(r, i => {
         DB.Repos.update({
           'name': i[0]
@@ -190,7 +204,8 @@ Meteor.methods({
       let asyncGhcommit = Meteor.wrapAsync(ghrepo.commit, ghrepo);
 
       asyncGhcommits(query,(e,r)=> {
-        if(!e)
+        if(!e) {
+          
           r.forEach((i) => {
             asyncGhcommit(i.sha, (e,r) => {
               console.log(e)
@@ -208,6 +223,10 @@ Meteor.methods({
               }
             }) 
           });
+          if(r.length > 0) {
+            getClocRepo(item.name);
+          }
+        }
       });
     });
   },
@@ -322,3 +341,6 @@ let hasData = DB.GithubUsers.findOne();
 if(!hasData) {
   getData();
 }
+Meteor.startup(function(){
+  Meteor.call('getClocRepos');
+});
