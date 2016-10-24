@@ -148,7 +148,7 @@ Meteor.methods({
     });
   },
   getClocRepos: function () {
-    //if(this.connection) throw new Meteor.Error("You cannot call this from the client");    
+    if(this.connection) throw new Meteor.Error("You cannot call this from the client");    
     asyncFoo(r => {
       _.each(r, i => {
         DB.Repos.update({
