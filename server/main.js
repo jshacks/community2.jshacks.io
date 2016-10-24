@@ -5,21 +5,22 @@ import * as Kefir from 'kefir'
 import R from 'ramda'
 
 const root = process.cwd().split('.meteor')[0]
-
+const clocLocation = (process.env.NODE_ENV === "production")?"/app/node_modules/.bin/cloc":`${root}/node_modules/.bin/cloc`;
+//console.log(root, process.cwd());
 const exec = (cmds) => Kefir.fromCallback(cb => {
   execOrig(cmds, (err, out, code) => {
     if (err instanceof Error)
       throw err;
     cb(out)
   })
-})
+});
 
 const getRepo = repo =>
-  exec(`cd ${root}/.repos && git clone git@github.com:jshacks/${repo}`)
+  exec(`mkdir -p ${root}/.repos && cd ${root}/.repos && git clone https://github.com/jshacks/${repo}`)
     .map(x => repo)
 
 const getCloc = repo =>
-  exec([`${root}/node_modules/.bin/cloc`, '--exclude-dir=node_modules', '--exclude-dir=bower_modules', '--json', `${root}/.repos/${repo}`])
+  exec([`${clocLocation}`, '--exclude-dir=node_modules,bower_modules', '--json', `${root}/.repos/${repo}`])
     .map(x => JSON.parse(x))
     .map(R.omit('header'))
     .map(x => ([repo, x]))
@@ -87,7 +88,7 @@ Meteor.startup(() => {
 Meteor.methods({
 
   getGithubUsers: function() {
-    if(this.connection) throw new Meteor.Error("You cannot call this from the client");
+    //if(this.connection) throw new Meteor.Error("You cannot call this from the client");
     asyncMembers({
       per_page: 500
     },(e, members) => {
@@ -127,7 +128,7 @@ Meteor.methods({
 
   },
   getGithubRepos: function() {
-    if(this.connection) throw new Meteor.Error("You cannot call this from the client");
+    //if(this.connection) throw new Meteor.Error("You cannot call this from the client");
     
     asyncRepos({
       per_page: 500
@@ -147,7 +148,7 @@ Meteor.methods({
     });
   },
   getClocRepos: function () {
-    if(this.connection) throw new Meteor.Error("You cannot call this from the client");    
+    //if(this.connection) throw new Meteor.Error("You cannot call this from the client");    
     asyncFoo(r => {
       _.each(r, i => {
         DB.Repos.update({
@@ -162,7 +163,7 @@ Meteor.methods({
     })
   },
   getGithubCommits: function() {
-    if(this.connection) throw new Meteor.Error("You cannot call this from the client");    
+    //if(this.connection) throw new Meteor.Error("You cannot call this from the client");    
     //get repos from db
     let repos = DB.Repos.find().fetch();
     let query = {
@@ -211,7 +212,7 @@ Meteor.methods({
     });
   },
   getGithubIssues: function() {
-    if(this.connection) throw new Meteor.Error("You cannot call this from the client");    
+    //if(this.connection) throw new Meteor.Error("You cannot call this from the client");    
     //get repos from db
     let repos = DB.Repos.find().fetch();
     let query = {
@@ -260,7 +261,7 @@ Meteor.methods({
     });
   },
   getGithubBranches: function() {
-    if(this.connection) throw new Meteor.Error("You cannot call this from the client");    
+    //if(this.connection) throw new Meteor.Error("You cannot call this from the client");    
     //get repos from db
     let repos = DB.Repos.find().fetch();
     let query = {
@@ -287,7 +288,7 @@ Meteor.methods({
     });
   },
   removeAllData: function() {
-    if(this.connection) throw new Meteor.Error("You cannot call this from the client");    
+    //if(this.connection) throw new Meteor.Error("You cannot call this from the client");    
     _.each(DB, function(item) {
       item.remove({});
     })
