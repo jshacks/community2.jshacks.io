@@ -37,7 +37,7 @@
                       </div>
                       <div class="statistic">
                         <div class="value">
-                          <i class="users icon"></i> {{issuesForUser}}
+                          <i class="warning icon"></i> {{issuesForUser}}
                         </div>
                         <div class="label">
                           Issues
@@ -45,7 +45,7 @@
                       </div>
                       <div class="statistic">
                         <div class="value">
-                          <i class="spy icon"></i> {{socialStats}}
+                          <i class="users icon"></i> {{socialStats}}
                         </div>
                         <div class="label">
                           Social
@@ -246,6 +246,13 @@
       {{/each}}
     </ul>-->
   {{else}}
-    Loading data
+    <div class="ui segment">
+      <div class="ui active inverted dimmer">
+        <div class="ui large text loader">Loading data</div>
+      </div>
+      <p></p>
+      <p></p>
+      <p></p>
+    </div>
   {{/if}}
 </template>
