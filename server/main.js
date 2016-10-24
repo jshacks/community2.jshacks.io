@@ -112,6 +112,7 @@ Meteor.methods({
               login: member.login,
               avatar_url: member.avatar_url,
               gravatar_url: member.gravatar_url,
+              html_url: member.html_url,
               followers: followers.map(x => x.login),
               following: following.map(x => x.login)
             });
@@ -139,6 +140,7 @@ Meteor.methods({
             name: item.name,
             full_name: item.full_name,
             description: item.description,
+            html_url: item.html_url,
             repoId: item.id
           });
         });

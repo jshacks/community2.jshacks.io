@@ -19,7 +19,7 @@
       <div class="ui five columns stackable grid">
         {{#each users}}
           <div class="column">
-            <div class="ui card">
+            <a class="ui card" href={{html_url}} target="_blank">
               <div class="image">
                 <img src={{avatar_url}} />
                 <div class="content">
@@ -54,7 +54,7 @@
                   </div>
                 </div>
               </div>
-            </div>
+            </a>
           </div>
         {{/each}}
       </div>
@@ -65,7 +65,7 @@
         {{#each repos}}
           <div class="column">
               <div class="ui segment">
-                <div class="ui header">{{name}}</div>
+                <div class="ui header"><a href={{html_url}} target="_blank">{{name}}</a></div>
                 <div class="content">{{description}}</div>
                 <div class="ui tiny images">
                   {{#each repoUsers}}
