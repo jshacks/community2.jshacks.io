@@ -81,12 +81,22 @@ Meteor.startup(() => {
   });
 
   SyncedCron.start();
+  Meteor.call('getClocRepos');
+  Meteor.call('getGithubCommits');
+
+  //checking if server has been initialised
+
+  let hasData = DB.GithubUsers.findOne();
+
+  if(!hasData) {
+    getData();
+  }
 });
 
 
 Meteor.methods({
-
   getGithubUsers: function() {
+    this.unblock();
     if(this.connection) throw new Meteor.Error("You cannot call this from the client");
     asyncMembers({
       per_page: 500
@@ -129,6 +139,7 @@ Meteor.methods({
 
   },
   getGithubRepos: function() {
+    this.unblock();
     if(this.connection) throw new Meteor.Error("You cannot call this from the client");
     
     asyncRepos({
@@ -151,6 +162,7 @@ Meteor.methods({
     });
   },
   getClocRepos: function () {
+    this.unblock();
     if(this.connection) throw new Meteor.Error("You cannot call this from the client");    
     asyncFoo(null,r => {
       _.each(r, i => {
@@ -166,6 +178,7 @@ Meteor.methods({
     })
   },
   getClocRepo: function (repo) {
+    this.unblock();
     if(this.connection) throw new Meteor.Error("You cannot call this from the client");    
     asyncFoo(repo,r => {
       _.each(r, i => {
@@ -181,6 +194,7 @@ Meteor.methods({
     })
   },
   getGithubCommits: function() {
+    this.unblock();
     if(this.connection) throw new Meteor.Error("You cannot call this from the client");    
     //get repos from db
     let repos = DB.Repos.find().fetch();
@@ -237,6 +251,7 @@ Meteor.methods({
     });
   },
   getGithubIssues: function() {
+    this.unblock();
     if(this.connection) throw new Meteor.Error("You cannot call this from the client");    
     //get repos from db
     let repos = DB.Repos.find().fetch();
@@ -288,6 +303,7 @@ Meteor.methods({
     });
   },
   getGithubBranches: function() {
+    this.unblock();
     if(this.connection) throw new Meteor.Error("You cannot call this from the client");    
     //get repos from db
     let repos = DB.Repos.find().fetch();
@@ -344,13 +360,4 @@ Meteor.publish('allBranches', function(){
   return DB.Branches.find();
 });
 
-//checking if server has been initialised
 
-let hasData = DB.GithubUsers.findOne();
-
-if(!hasData) {
-  getData();
-}
-Meteor.startup(function(){
-  Meteor.call('getClocRepos');
-});
