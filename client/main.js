@@ -9,6 +9,8 @@ import './main.html';
 Template.hello.onCreated(function helloOnCreated() {
   // counter starts at 0
   this.isActive = new ReactiveVar("event");
+  this.usersort = new ReactiveVar("login");
+  this.projectsort = new ReactiveVar("name");
   this.subscribe('allUsers');
   this.subscribe('allRepos');
   this.subscribe('allCommits');
@@ -84,7 +86,30 @@ Template.hello.helpers({
     return logos[this];
   },
   users: function() {
-    return DB.GithubUsers.find();
+    let users = DB.GithubUsers.find().fetch();
+    let sort = Template.instance().usersort.get() || 'login';
+
+    _.each(users, (u) => {
+      u.issuesForUser = DB.Issues.find({
+        userId: u.userId
+      }).count(); 
+
+      u.commitsForUser = DB.Commits.find({
+        userId: u.userId
+      }).count();
+
+      let us = R.map(R.prop('login'), DB.GithubUsers.find().fetch())
+      let socialUsers = R.concat(u.following, u.followers)
+      let inter = R.intersection(us, socialUsers)
+      u.socialStats = inter.length
+    })
+    
+    return _.sortBy(users, function(u) {
+      if(sort === "login")
+        return u[sort];
+      else
+        return 0 - u[sort];
+    });  
   },
   totalUsers: function () {
     return DB.GithubUsers.find().fetch().length
@@ -93,7 +118,39 @@ Template.hello.helpers({
     return DB.Repos.find().fetch().length
   },
   repos: function() {
-    return DB.Repos.find();
+    let repos = DB.Repos.find().fetch();
+    let sort = Template.instance().projectsort.get() || 'name';
+
+    _.each(repos, (r) => {
+      r.commitsForProject = DB.Commits.find({
+        repoId: r.repoId
+      }).count();
+
+      r.issuesForProject = DB.Issues.find({
+        repoId: r.repoId
+      }).count();
+
+      let project = DB.Repos.findOne({
+        repoId: r.repoId
+      });
+
+      let stats = project.cloc;
+      let total = 0;
+
+      delete stats.SUM;
+      _.each(stats, (i) => {
+        total += i.code
+      });
+
+      r.locForProject = total;
+    });
+
+    return _.sortBy(repos, function(r) {
+      if(sort === "name")
+        return r[sort];
+      else
+        return 0 - r[sort];
+    });
   },
   commits: function() {
     return DB.Commits.find();
@@ -104,47 +161,6 @@ Template.hello.helpers({
   branches: function() {
     return DB.Branches.find();
   },
-  commitsForUser: function() {
-    return DB.Commits.find({
-      userId: this.userId
-    }).count();
-  },
-  issuesForUser: function() {
-    return DB.Issues.find({
-      userId: this.userId
-    }).count();
-  },
-  commitsForProject: function() {
-    return DB.Commits.find({
-      repoId: this.repoId
-    }).count();
-  },
-  issuesForProject: function() {
-    return DB.Issues.find({
-          repoId: this.repoId
-        }).count();
-  },
-  locForProject: function() {
-    let project = DB.Repos.findOne({
-      repoId: this.repoId
-    });
-
-    let stats = project.cloc;
-    let total = 0;
-
-    delete stats.SUM;
-    _.each(stats, (i) => {
-      total += i.code
-    });
-
-    return total;
-  },
-  socialStats: function() {
-    let users = R.map(R.prop('login'), DB.GithubUsers.find().fetch())
-    let socialUsers = R.concat(this.following, this.followers)
-    let inter = R.intersection(users, socialUsers)
-    return inter.length
-  },
   commitsForRepo: function() {
     return DB.Commits.find({
       repoId: this.repoId
@@ -152,6 +168,12 @@ Template.hello.helpers({
   },
   isActive: function(who) {
     return Template.instance().isActive.get() === who ? 'active item select': 'item select';
+  },
+  isFilteredUser: function(who) {
+    return Template.instance().usersort.get() === who ? 'active item': 'item';
+  },
+  isFilteredProject: function(who) {
+    return Template.instance().projectsort.get() === who ? 'active item': 'item';
   },
   isSelected: function(who) {
     return Template.instance().isActive.get() === who;
@@ -197,5 +219,17 @@ Template.hello.events({
     $(event.preventDefault());
 
     instance.isActive.set($(event.currentTarget).data('who'));
+  },
+  'click .sortPeople a'(event, instance) {
+    $(event.preventDefault());
+
+    if(instance.usersort.get() === $(event.currentTarget).data('who')) instance.usersort.set('login')
+    else instance.usersort.set($(event.currentTarget).data('who'));
+  },
+  'click .sortProjects a'(event, instance) {
+    $(event.preventDefault());
+
+    if(instance.projectsort.get() === $(event.currentTarget).data('who')) instance.projectsort.set('login')
+    else instance.projectsort.set($(event.currentTarget).data('who'));
   },
 });

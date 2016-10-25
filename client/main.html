@@ -16,11 +16,17 @@
     <a data-who="projects" class={{isActive "projects"}}>Projects</a>
   </div>
   {{#if Template.subscriptionsReady}}
+
       {{#if isSelected "people"}}
-      <div class="ui five columns stackable grid">
+          <div class="ui green three item menu sortPeople">
+            <a data-who="commitsForUser" class={{isFilteredUser "commitsForUser"}}>Top Commits</a>
+            <a data-who="issuesForUser" class={{isFilteredUser "issuesForUser"}}>Top Issues</a>
+            <a data-who="socialStats" class={{isFilteredUser "socialStats"}}>Top Social</a>
+          </div>
+      <div class="ui five columns doubling stackable grid">
         {{#each users}}
           <div class="column">
-            <a class="ui card" href={{html_url}} target="_blank">
+            <a class="ui fluid card" href={{html_url}} target="_blank">
               <div class="image">
                 <img src={{avatar_url}} />
                 <div class="content">
@@ -61,8 +67,12 @@
       </div>
       {{/if}}
       {{#if isSelected "projects"}}
-      <div class="ui two columns stackable grid">
-
+      <div class="ui green three item menu sortProjects">
+        <a data-who="commitsForProject" class={{isFilteredProject "commitsForProject"}}>Most Commits</a>
+        <a data-who="issuesForProject" class={{isFilteredProject "issuesForProject"}}>Most Issues</a>
+        <a data-who="locForProject" class={{isFilteredProject "locForProject"}}>Most Lines Of Code</a>
+      </div>
+      <div class="ui two columns doubling stackable grid">
         {{#each repos}}
           <div class="column">
               <div class="ui segment">
