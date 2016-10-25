@@ -1,5 +1,6 @@
 <head>
   <title>JSHacks 2016 community</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href='/favicon.ico' rel='shortcut icon' type='image/ico'>
 </head>
 
@@ -20,7 +21,7 @@
       <div class="ui five columns stackable grid">
         {{#each users}}
           <div class="column">
-            <a class="ui card" href={{html_url}} target="_blank">
+            <a class="ui card centered" href={{html_url}} target="_blank">
               <div class="image">
                 <img src={{avatar_url}} />
                 <div class="content">
@@ -222,7 +223,7 @@
           <br />
           <br />
 
-          <div class="ui small images columns grid four">
+          <div class="ui small images columns grid four centered">
             {{#each types}}
               <div>
                 <img src="{{logo}}" />
